@@ -1,0 +1,43 @@
+{% extends 'views/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <ul>
+      <h2>Click to view Data</h2>
+      {% if user.username == "ER200" %}
+        {{user}}
+        <li>
+          <a href="{% url 'data' %}">Community 1</a>
+        </li>
+      {% elif user.username == "ER300" %}
+        <li>
+          <a href="{% url 'data' %}">Community 2</a>
+        </li>
+      {% elif user.username == "ER400" %}
+        <li>
+          <a href="{% url 'data' %}">Community 3</a>
+        </li>
+      {% elif user.username == "ER500" %}
+        <li>
+          <a href="{% url 'data' %}">Community 4</a>
+        </li>
+      {% elif user.username == "ER600" %}
+        <li>
+          <a href="{% url 'data' %}">Community 5</a>
+        </li>
+      {% elif user.username == "ER700" %}
+        <li>
+          <a href="{% url 'data' %}">Community 6</a>
+        </li>
+      {% elif user.username == "ER800" %}
+        <li>
+          <a href="{% url 'data' %}">Community 7</a>
+        </li>
+      {% endif %}
+    </ul>
+{% else %}
+    <p>You need to <a href="{% url 'login' %}">Log in</a> to access the communities.</p>
+{% endif %}
+
+{% endblock %}

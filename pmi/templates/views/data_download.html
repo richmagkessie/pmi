@@ -1,0 +1,75 @@
+{% extends 'views/base.html' %}
+{% load static %}
+{% block content %}
+    {% block title %}<title>Community Data</title>{% endblock %}
+    <h1>Communities and Data</h1>
+
+    <div id="community-data">
+        {% for community, data in community_data.items %}
+            {% for username, assigned_community in user_communities.items %}
+                {% if user.username == username and assigned_community == community.name %}
+                    <h2>{{ community.name }}</h2>
+                    <ul>
+                        {% for data_entry in data %}
+                            <li>{{ data_entry.data_name }}: {{ data_entry.data_value }}
+                                <a href="{{ data_entry.data_name.url }}" download>Download File</a>
+                                <br>
+                                <div id="csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    <!-- Placeholder for CSV data -->
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        {% if forloop.counter0 == 0 %}
+            <p>No data available for {{ user.username }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        (function () {
+            {% for community, data in community_data.items %}
+                {% for username, assigned_community in user_communities.items %}
+                    {% if user.username == username and assigned_community == community.name %}
+                        {% for data_entry in data %}
+                            var iframeId = "csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}";
+                            var csvUrl = "{{ data_entry.data_name.url }}";
+
+                            fetch(csvUrl)
+                                .then(response => response.text())
+                                .then(data => {
+                                    var table = "<table style='border: 1px solid #000; border-collapse: collapse;'>";
+                                    var rows = data.split("\n");
+                                    for (var i = 0; i < rows.length; i++) {
+                                        if (i === 0) {
+                                            // Display the first row as headers
+                                            table += "<thead><tr>";
+                                            var headerCells = rows[i].split(",");
+                                            for (var j = 0; j < headerCells.length; j++) {
+                                                table += "<th>" + headerCells[j] + "</th>";
+                                            }
+                                            table += "</tr></thead><tbody>";
+                                        } else {
+                                            table += "<tr>";
+                                            var cells = rows[i].split(",");
+                                            for (var j = 0; j < cells.length; j++) {
+                                                // Add inline border to each table cell
+                                                table += "<td style='border: 1px solid #000;'>" + cells[j] + "</td>";
+                                            }
+                                            table += "</tr>";
+                                        }
+                                    }
+                                    table += "</tbody></table>";
+                                    document.getElementById(iframeId).innerHTML = table;
+                                })
+                                .catch(error => console.log(error));
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        })();
+    </script>
+</div>
+{% endblock %}
