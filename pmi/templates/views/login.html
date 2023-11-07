@@ -1,15 +1,36 @@
 {% extends 'views/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
+{% block mycss %}
+<head> 
+    <style>
+        body{
+            background: black;
+        } 
+    </style> 
+</head>
+{% endblock %}
+
+
 {% block content %}
-<h1>Login page</h1>
-<div>
-	<main>
-		<form action="" method="post">
-			{% csrf_token %}
-			{{login_form|crispy}}<br>
-			<button>Sign In</button>
-		</form>
-	</main>
+
+<div class="p-5">
+    <main class="mx-auto text-center">
+           <div class="bgblack" style="">
+                <img src="{% static 'images/logo.webp' %} " style="height: 60px; margin-bottom: 10px;">
+
+           </div> 
+        <h1>Login page</h1>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="">
+                {{ login_form.username.label_tag }} {{ login_form.username }}<br><br>
+                {{ login_form.password.label_tag }} {{ login_form.password }}<br><br>           
+            </div><br>
+            <button class="btn btn-primary">Sign In</button>
+        </form>
+    </main>
 </div>
 {% endblock %}

@@ -2,20 +2,29 @@
 {% load static %}
 {% block content %}
     {% block title %}<title>Community Data</title>{% endblock %}
-    <h1>Communities and Data</h1>
 
-    <div id="community-data">
+    <div id="community-data" class="mt-5">
+                
+        <div class="d-flex justify-content-between align-items-center py-2">
+            <h2>Communities and Data</h2>
+            <a href="{% url 'login' %}" class="btn btn-primary">Logout</a>
+        </div>
+
         {% for community, data in community_data.items %}
             {% for username, assigned_community in user_communities.items %}
                 {% if user.username == username and assigned_community == community.name %}
-                    <h2>{{ community.name }}</h2>
+                    <h3>{{ community.name }}</h3>
                     <ul>
                         {% for data_entry in data %}
                             <li>{{ data_entry.data_name }}: {{ data_entry.data_value }}
-                                <a href="{{ data_entry.data_name.url }}" download>Download File</a>
+                                <a class="btn btn-primary" href="{{ data_entry.data_name.url }}" download>Download File</a>
                                 <br>
-                                <div id="csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
-                                    <!-- Placeholder for CSV data -->
+                                <div id="csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}-wrapper" class="table-container">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <!-- Your original table content here -->
+                                        </table>
+                                    </div>
                                 </div>
                             </li>
                         {% endfor %}
@@ -28,41 +37,65 @@
         {% endif %}
     </div>
 
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table-responsive .table {
+            border: 2px solid #000;
+        }
+
+        .table-responsive .table th {
+            background-color: #f5f5f5;
+            border: 1px solid #000;
+            font-weight: bold;
+        }
+
+        .table-responsive .table th,
+        .table-responsive .table td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+
     <script>
         (function () {
             {% for community, data in community_data.items %}
                 {% for username, assigned_community in user_communities.items %}
                     {% if user.username == username and assigned_community == community.name %}
                         {% for data_entry in data %}
-                            var iframeId = "csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}";
+                            var containerId = "csv-container-{{ forloop.parentloop.counter }}-{{ forloop.counter }}-wrapper";
                             var csvUrl = "{{ data_entry.data_name.url }}";
 
                             fetch(csvUrl)
                                 .then(response => response.text())
                                 .then(data => {
-                                    var table = "<table style='border: 1px solid #000; border-collapse: collapse;'>";
+                                    var table = "<table class='table table-bordered table-hover'>";
                                     var rows = data.split("\n");
                                     for (var i = 0; i < rows.length; i++) {
                                         if (i === 0) {
                                             // Display the first row as headers
                                             table += "<thead><tr>";
-                                            var headerCells = rows[i].split(",");
-                                            for (var j = 0; j < headerCells.length; j++) {
-                                                table += "<th>" + headerCells[j] + "</th>";
-                                            }
-                                            table += "</tr></thead><tbody>";
                                         } else {
                                             table += "<tr>";
-                                            var cells = rows[i].split(",");
-                                            for (var j = 0; j < cells.length; j++) {
-                                                // Add inline border to each table cell
-                                                table += "<td style='border: 1px solid #000;'>" + cells[j] + "</td>";
+                                        }
+                                        var cells = rows[i].split(",");
+                                        for (var j = 0; j < cells.length; j++) {
+                                            if (i === 0) {
+                                                table += "<th>" + cells[j] + "</th>";
+                                            } else {
+                                                table += "<td>" + cells[j] + "</td>";
                                             }
+                                        }
+                                        if (i === 0) {
+                                            table += "</tr></thead><tbody>";
+                                        } else {
                                             table += "</tr>";
                                         }
                                     }
                                     table += "</tbody></table>";
-                                    document.getElementById(iframeId).innerHTML = table;
+                                    document.getElementById(containerId).innerHTML = table;
                                 })
                                 .catch(error => console.log(error));
                         {% endfor %}

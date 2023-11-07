@@ -2,45 +2,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	{% block title %}
-	<title>Listings</title>
-	{% endblock %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block title %}
+    <title>Listings</title>
+    {% endblock %}
 
-	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+   
 </head>
 <body>
-	
-	{% block body %}
-		<!-- Messages block -->
-		    {% if messages %}
-		    {% for message in messages %}
-		    <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
-		        {{ message }}
-		    </div>
-		    {% endfor %}
-		    {% endif %}
-	    <!-- End of messages block -->
-			Listings
-			<a href="{% url 'login' %}">Logout</a>
-	{% endblock %}
 
-
-{% block content %}
-{% endblock %}
-
-{% block 'footer'%}
-<footer>
-    <div>
-        <p>
-            Powered by <a href="#">Data Science- Dept</a>
-        </p>
-        <p>MALVAC</p>
-        <p>Copyright © {% now 'Y' %} <a href="#">KHRC</a></p>
+<div class="container mt-5">
+    <!-- Messages block -->
+    {% if messages %}
+    <div class="alert alert-success">
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
     </div>
+    {% endif %}
+    <!-- End of messages block -->
+
+    {% block body %}{% endblock %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer class="bg-light text-center text-lg-start">
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    MALVAC &copy; {% now 'Y' %}
+    <a class="text-dark" href="#">KHRC.com</a>
+  </div>
+  <!-- Copyright -->
 </footer>
-{% endblock %}
 </body>
 </html>
